@@ -498,9 +498,16 @@ class SecurityMiddleware(BaseHTTPMiddleware):
 
         # 2. Check Session Existence
         session_id = request.cookies.get("access_session")
-        if not session_id or session_id not in ACCESS_SESSIONS:
+        if not session_id:
+            log_event(f"❌ Middleware Blocked: No 'access_session' cookie in {request.url.path}", "error")
             if path.startswith("/api") or "json" in request.headers.get("accept", ""):
-                 return JSONResponse(status_code=401, content={"error": "Unauthorized"})
+                 return JSONResponse(status_code=401, content={"error": "Missing cookie"})
+            return RedirectResponse("/auth/login-page")
+        
+        if session_id not in ACCESS_SESSIONS:
+            log_event(f"❌ Middleware Blocked: Session ID not in memory in {request.url.path} (App likely restarted)", "error")
+            if path.startswith("/api") or "json" in request.headers.get("accept", ""):
+                 return JSONResponse(status_code=401, content={"error": "Session wiped from memory"})
             return RedirectResponse("/auth/login-page")
 
         session = ACCESS_SESSIONS[session_id]
@@ -1428,11 +1435,13 @@ def kite_callback(request_token: str, request: Request):
 
     session_id = request.cookies.get("access_session")
     if not session_id:
-        return RedirectResponse("/auth/login-page")
+        log_event("❌ Kite Callback Failed: 'access_session' cookie is MISSING from the request. Check your Zerodha Redirect URL.", "error")
+        return {"error": "Kite Callback Failed: Cookie Missing. Make sure you access the site via HTTPS and the Zerodha Redirect URL perfectly matches."}
 
     session = ACCESS_SESSIONS.get(session_id)
     if not session:
-        return RedirectResponse("/auth/login-page")
+        log_event("❌ Kite Callback Failed: The in-memory session was wiped! Railway container might have restarted during your login.", "error")
+        return {"error": "Kite Callback Failed: Session wiped due to server restart. Please log in again."}
 
     try:
         kite = KiteConnect(api_key=API_KEY)
