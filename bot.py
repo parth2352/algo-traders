@@ -1402,9 +1402,9 @@ def user_login(response: Response, username: str, password: str, request: Reques
         key="access_session",
         value=session_id,
         httponly=True,
-        secure=not is_localhost,                    # False on localhost
+        secure=not is_localhost,
         samesite="lax" if is_localhost else "none",
-        domain=None if is_localhost else ".jhalariabrothers.com"
+        domain=None # Defaulting to None allows it to work dynamically on Railway and Vercel hostnames
     )
 
     return {"status": "ok", "msg": "Authenticated"}
