@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Jhalaria Holdings - Dashboard</title>
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+
+    <script>
+
+        tailwind.config = {
+
+            theme: {
+
+                extend: {
+
+                    fontFamily: {
+
+                        sans: ['Inter', 'sans-serif'],
+
+                        mono: ['JetBrains Mono', 'monospace'],
+
+                    },
+
+                    colors: {
+
+                        slate: {
+
+                            50: '#F8FAFC',
+
+                            100: '#F1F5F9',
+
+                            200: '#E2E8F0',
+
+                            300: '#CBD5E1',
+
+                            400: '#94A3B8',
+
+                            500: '#64748B',
+
+                            600: '#475569',
+
+                            700: '#334155',
+
+                            800: '#1E293B',
+
+                            900: '#0F172A',
+
+                        },
+
+                        primary: {
+
+                            DEFAULT: '#2563EB',
+
+                            dark: '#1D4ED8',
+
+                            light: '#60A5FA',
+
+                            bg: '#EFF6FF'
+
+                        },
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    </script>
+
+
+
+    <style>
+
+        body {
+
+            background-color: #F1F5F9;
+
+            color: #334155;
+
+        }
+
+
+
+        .sidebar-glass {
+
+            background: rgba(255, 255, 255, 0.95);
+
+            backdrop-filter: blur(10px);
+
+            border-right: 1px solid #E2E8F0;
+
+        }
+
+
+
+        .bento-card {
+
+            background: #FFFFFF;
+
+            border: 1px solid #E2E8F0;
+
+            border-radius: 16px;
+
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        }
+
+
+
+        .bento-card:hover {
+
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08);
+
+            transform: translateY(-2px);
+
+            border-color: #CBD5E1;
+
+        }
+
+
+
+        .label-text {
+
+            font-size: 0.65rem;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.08em;
+
+            color: #64748B;
+
+            font-weight: 600;
+
+        }
+
+
+
+        .metric-value {
+
+            font-family: 'JetBrains Mono', monospace;
+
+            letter-spacing: -0.05em;
+
+        }
+
+
+
+        ::-webkit-scrollbar {
+
+            width: 6px;
+
+            height: 6px;
+
+        }
+
+
+
+        ::-webkit-scrollbar-thumb {
+
+            background: #CBD5E1;
+
+            border-radius: 4px;
+
+        }
+
+
+
+        .nav-item.active {
+
+            background-color: #EFF6FF;
+
+            color: #1E293B;
+
+            border-right: 3px solid #2563EB;
+
+        }
+
+    </style>
+
+</head>
+
+
+
+<body class="h-screen flex overflow-hidden antialiased selection:bg-primary-light selection:text-white">
+
+
+
+    <aside class="w-72 sidebar-glass flex flex-col z-30 shrink-0 shadow-premium h-full">
+
+        <div class="h-20 flex items-center px-8 border-b border-slate-200">
+
+            <div class="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white mr-4 shadow-lg shadow-slate-900/20">
+
+                <i class="fa-solid fa-layer-group"></i>
+
+            </div>
+
+            <div>
+
+                <h1 class="text-base font-bold text-slate-900 tracking-tight leading-none">JHALARIA<span class="text-primary">HOLDINGS</span></h1>
+
+                <p class="text-[10px] text-slate-500 font-medium mt-1">PRO TERMINAL v4.0</p>
+
+            </div>
+
+        </div>
+
+
+
+        <nav class="flex-1 px-4 py-8 space-y-1.5 overflow-y-auto">
+
+            <div class="px-4 mb-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Execution</div>
+
+            <a href="#" onclick="navigateTo(this, 'dashboard')" class="nav-item active flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-sm transition group">
+
+                <i class="fa-solid fa-grid-2 text-slate-400 group-hover:text-primary transition"></i> Dashboard
+
+            </a>
+
+            <a href="#" onclick="navigateTo(this, 'signals')" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-sm transition group">
+
+                <i class="fa-solid fa-satellite-dish text-slate-400 group-hover:text-primary transition"></i> Signal Queue
+
+            </a>
+
+
+
+            <div class="px-4 mt-6 mb-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Analysis</div>
+
+            <a href="/terminal" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-sm transition group">
+                <i class="fa-solid fa-chart-line text-slate-400 group-hover:text-primary transition"></i> Benchmark Terminal
+            </a>
+
+            <a href="#" onclick="navigateTo(this, 'history')" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-sm transition group">
+
+                <i class="fa-solid fa-clock-rotate-left text-slate-400 group-hover:text-primary transition"></i> Trade History
+
+            </a>
+
+
+
+            <div class="px-4 mt-6 mb-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">System</div>
+
+            <a href="#" onclick="navigateTo(this, 'profile')" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-sm transition group">
+
+                <i class="fa-regular fa-id-card text-slate-400 group-hover:text-primary transition"></i> Profile
+
+            </a>
+
+            <a href="#" onclick="navigateTo(this, 'settings')" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-sm transition group">
+
+                <i class="fa-solid fa-sliders text-slate-400 group-hover:text-primary transition"></i> Strategy Config
+
+            </a>
+
+        </nav>
+
+
+
+        <div class="p-6 border-t border-slate-200 bg-slate-50/50">
+
+            <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+
+                <div class="flex items-center justify-between mb-3">
+
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Status</span>
+
+                    <div id="navConnectionStatusBadge" class="flex items-center gap-1.5">
+
+                        <span id="connDot" class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+
+                        <span id="connText" class="text-[10px] font-bold text-red-500">OFFLINE</span>
+
+                    </div>
+
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="connectKite()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 shadow-lg shadow-slate-900/10">
+                        <i class="fa-solid fa-link"></i> Connect Kite
+                    </button>
+                    <button onclick="refreshToken()" class="w-full py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate"></i> Reconnect
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+    <script>
+        async function refreshToken() {
+            if(confirm("Are you sure you want to refresh the token? This will disconnect the bot.")) {
+                try {
+                    await fetch("/refresh_token", {method: "POST"});
+                    window.location.href = "/login/zerodha";
+                } catch(e) {
+                    alert("Error refreshing token");
+                }
+            }
+        }
+    </script>
+
+
+
+    <main class="flex-1 flex flex-col h-full relative overflow-hidden bg-[#F8FAFC]">
+
+
+
+        <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-10 z-20 sticky top-0">
+
+            <div class="flex items-center gap-6">
+
+                <div class="flex items-center gap-2 text-sm font-medium text-slate-500">
+
+                    <i class="fa-solid fa-house"></i> <span>/</span> <span class="text-slate-900 font-bold" id="pageTitle">Dashboard</span>
+
+                </div>
+
+                <div class="h-6 w-px bg-slate-200"></div>
+
+                <div class="flex items-center gap-3 bg-slate-100 px-4 py-2 rounded-full border border-slate-200" id="regimeBadge">
+
+                    <span class="label-text text-slate-600">Regime</span>
+
+                    <span class="w-px h-3 bg-slate-300"></span>
+
+                    <span id="regimeText" class="text-xs font-bold text-slate-800 flex items-center gap-1.5">WAITING...</span>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="flex items-center gap-8">
+
+                <div class="hidden lg:flex items-center gap-6 text-sm">
+
+                    <div class="text-right">
+
+                        <span class="label-text block mb-0.5">Nifty 50</span>
+
+                        <div class="flex gap-2 items-center">
+
+                            <span id="niftyValue" class="font-mono font-bold text-slate-700">0.00</span>
+
+                            <span id="niftyChange" class="font-mono text-xs font-bold text-slate-400">0.0%</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="text-right border-l pl-6 border-slate-200">
+
+                        <span class="label-text block mb-0.5">Sensex</span>
+
+                        <div class="flex gap-2 items-center">
+
+                            <span id="sensexValue" class="font-mono font-bold text-slate-700">0.00</span>
+
+                            <span id="sensexChange" class="font-mono text-xs font-bold text-slate-400">0.0%</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <button onclick="toggleKillSwitch()" id="killSwitchBtn" class="bg-red-50 text-red-600 border border-red-200 hover:bg-red-600 hover:text-white transition px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-2">
+
+                    <i class="fa-solid fa-skull"></i> KILL SWITCH
+
+                </button>
+
+
+
+                <div class="h-8 w-px bg-slate-200"></div>
+
+
+
+                <div class="text-right hidden md:block">
+
+                    <div id="clock" class="text-sm font-mono font-bold text-slate-900">00:00:00</div>
+
+                    <div class="text-[10px] font-medium text-slate-400">IST (UTC+5:30)</div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <div class="flex-1 overflow-y-auto p-10 scroll-smooth">
+
+            <div class="max-w-[1600px] mx-auto pb-10">
+
+
+
+                <div id="view-dashboard" class="view-section space-y-8">
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+                        <div class="bento-card p-6 flex flex-col justify-between h-32">
+
+                            <p class="label-text mb-2">Total Equity</p>
+
+                            <h2 id="totalEquity" class="text-2xl font-bold text-slate-900 font-mono tracking-tight">--</h2>
+
+                            <div class="text-[10px] text-slate-400">Cash + Holdings Value</div>
+
+                        </div>
+
+                        <div class="bento-card p-6 flex flex-col justify-between h-32">
+
+                            <p class="label-text mb-2">Strategy Cash Available</p>
+
+                            <h2 id="cashAvailable" class="text-2xl font-bold text-slate-900 font-mono tracking-tight">--</h2>
+
+                            <div class="text-[10px] text-slate-400" id="cashSubtitle">Loading...</div>
+
+                        </div>
+
+                        <div class="bento-card p-6 flex flex-col justify-between h-32">
+
+                            <p class="label-text mb-2">Risk Exposure</p>
+
+                            <h2 id="riskExposure" class="text-2xl font-bold text-blue-600 font-mono tracking-tight">0.0%</h2>
+
+                            <div class="text-[10px] text-slate-400">Of Strategy Capital</div>
+
+                        </div>
+
+                        <div class="bento-card p-6 flex flex-col justify-between h-32">
+
+                            <p class="label-text mb-2">Accumulated PnL</p>
+
+                            <h2 id="dayPnL" class="text-2xl font-bold text-slate-400 font-mono tracking-tight">--</h2>
+
+                            <div class="text-[10px] text-slate-400">Realized + Unrealized</div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                        <div class="bento-card lg:col-span-2 overflow-hidden min-h-[500px]">
+
+                            <div class="p-5 border-b border-slate-200 bg-white flex justify-between items-center">
+
+                                <h3 class="text-sm font-bold text-slate-800">Active Positions</h3>
+
+                                <div class="flex gap-2">
+
+                                    <button onclick="fetchDashboard()" class="text-xs bg-slate-50 border border-slate-200 px-3 py-1 rounded hover:bg-slate-100"><i class="fa-solid fa-rotate"></i> Refresh</button>
+
+                                </div>
+
+                            </div>
+
+                            <div class="overflow-x-auto">
+
+                                <table class="w-full text-left border-collapse">
+
+                                    <thead class="bg-slate-50 text-xs text-slate-500 uppercase">
+
+                                        <tr>
+
+                                            <th class="px-6 py-4 font-bold">Symbol</th>
+
+                                            <th class="px-6 py-4 font-bold text-right">Qty</th>
+
+                                            <th class="px-6 py-4 font-bold text-right">Avg</th>
+
+                                            <th class="px-6 py-4 font-bold text-right">LTP</th>
+
+                                            <th class="px-6 py-4 font-bold text-right">PnL</th>
+
+                                            <th class="px-6 py-4 font-bold text-center">Decay</th>
+
+                                            <th class="px-6 py-4 text-right">Action</th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody id="positionsTable" class="text-sm text-slate-700 divide-y divide-slate-100">
+
+                                        <tr>
+
+                                            <td colspan="7" class="px-6 py-8 text-center text-slate-400">Scanning for positions...</td>
+
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="bento-card overflow-hidden flex flex-col h-[500px] bg-slate-900 text-slate-300">
+
+                            <div class="p-4 border-b border-slate-800 bg-slate-900 flex justify-between items-center shrink-0">
+
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Live Terminal</span>
+
+                                <div class="flex gap-1.5 items-center">
+
+                                    <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+
+                                    <span class="text-[10px] text-emerald-500">STREAMING</span>
+
+                                </div>
+
+                            </div>
+
+                            <div id="consoleLog" class="p-4 font-mono text-xs space-y-2 overflow-y-auto flex-1 bg-slate-950/50"></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div id="view-signals" class="view-section hidden space-y-6">
+
+                    <div class="bento-card p-6">
+
+                        <div class="flex justify-between items-center mb-6">
+
+                            <h2 class="text-lg font-bold">Candidate Queue</h2>
+
+                            <p class="text-sm text-slate-500">Stocks matching momentum criteria (Scanned at 3:20 PM)</p>
+
+                        </div>
+
+                        <table class="w-full text-left text-sm">
+
+                            <thead class="bg-slate-50 border-b border-slate-200">
+
+                                <tr>
+
+                                    <th class="p-4">Symbol</th>
+
+                                    <th class="p-4">Rank Score</th>
+
+                                    <th class="p-4">Price</th>
+
+                                    <th class="p-4">Signal Strength</th>
+
+                                    <th class="p-4">Volatility</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="signalTable" class="divide-y divide-slate-100">
+
+                                <tr>
+
+                                    <td colspan="5" class="p-4 text-center text-slate-400">No signals generated yet.</td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+
+                <div id="view-analytics" class="view-section hidden space-y-6">
+
+                    <div class="bento-card p-6 h-[500px] flex flex-col">
+
+                        <div class="flex justify-between items-center mb-4">
+
+                            <h2 class="text-lg font-bold">Equity Curve</h2>
+
+                            <div class="flex gap-2">
+
+                                <button class="text-xs bg-primary text-white px-3 py-1 rounded">Since Inception (Feb 2026)</button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="relative flex-1 w-full">
+
+                            <canvas id="equityChart"></canvas>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div id="view-history" class="view-section hidden space-y-6">
+
+                    <div class="bento-card p-6">
+
+                        <h2 class="text-lg font-bold mb-4">Trade Ledger</h2>
+
+                        <div class="overflow-x-auto">
+
+                            <table class="w-full text-left text-sm border-collapse">
+
+                                <thead class="bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase text-slate-500">
+
+                                    <tr>
+
+                                        <th class="p-4">Symbol</th>
+
+                                        <th class="p-4">Entry Date</th>
+
+                                        <th class="p-4">Exit Date</th>
+
+                                        <th class="p-4 text-right">Entry Price</th>
+
+                                        <th class="p-4 text-right">Exit Price</th>
+
+                                        <th class="p-4 text-right">Qty</th>
+
+                                        <th class="p-4">Reason</th>
+
+                                        <th class="p-4 text-right">PnL</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="historyTable" class="divide-y divide-slate-100">
+
+                                    <tr>
+
+                                        <td colspan="8" class="p-4 text-center text-slate-400">Loading history...</td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div id="view-settings" class="view-section hidden space-y-6">
+
+                    <div class="bento-card p-6 max-w-4xl">
+
+                        <h2 class="text-lg font-bold mb-6">Strategy Configuration</h2>
+
+                        <div id="configContainer" class="grid grid-cols-3 gap-4 mb-8">
+
+                            </div>
+
+
+
+                        <hr class="mb-6 border-slate-100">
+
+
+
+                        <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
+
+                            <h3 class="font-bold text-slate-800 mb-2"><i class="fa-solid fa-coins mr-1 text-primary"></i> Capital Allocation</h3>
+
+                            <p class="text-xs text-slate-500 mb-6 max-w-xl leading-relaxed">Control the maximum amount of money the algorithm is allowed to manage. It must be greater than current holdings and less than total account equity.</p>
+
+                            
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+
+                                <div class="space-y-4">
+
+                                    <label class="block text-xs font-bold text-slate-600 uppercase">Allocation Mode</label>
+
+                                    <select id="capitalMode" onchange="handleModeChange()" class="w-full bg-white border border-slate-300 text-sm rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+
+                                        <option value="TOTAL_EQUITY">Use Total Account Equity</option>
+
+                                        <option value="FIXED">Set Fixed Capital Limit</option>
+
+                                    </select>
+
+                                    
+
+                                    <div id="fixedCapitalInputGroup" class="hidden space-y-4">
+
+                                        <label class="block text-xs font-bold text-slate-600 uppercase mt-4">Fixed Capital (₹)</label>
+
+                                        <input type="number" id="fixedCapitalInput" class="w-full bg-white border border-slate-300 text-sm font-mono rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="E.g. 500000">
+
+                                    </div>
+
+
+
+                                    <button onclick="saveCapitalSettings()" class="bg-slate-900 text-white font-bold text-xs py-2.5 px-6 rounded-lg hover:bg-slate-800 transition">Save Capital Settings</button>
+
+                                </div>
+
+
+
+                                <div class="bg-white p-4 rounded border border-slate-200 text-xs">
+
+                                    <h4 class="font-bold text-slate-700 mb-3 uppercase tracking-wider text-[10px]">Real-time Constraints</h4>
+
+                                    <div class="flex justify-between py-1 border-b border-slate-50">
+
+                                        <span class="text-slate-500">Total Account Equity:</span>
+
+                                        <span id="constTotalEq" class="font-mono font-bold text-slate-800">₹0</span>
+
+                                    </div>
+
+                                    <div class="flex justify-between py-1">
+
+                                        <span class="text-slate-500">Current Holdings Value:</span>
+
+                                        <span id="constHoldings" class="font-mono font-bold text-slate-800">₹0</span>
+
+                                    </div>
+
+                                    <p class="text-orange-600 mt-2 bg-orange-50 p-2 rounded hidden" id="capitalErrorMsg"></p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div id="view-profile" class="view-section hidden space-y-6">
+
+                    <div class="bento-card p-8 flex items-center gap-8 max-w-3xl">
+
+                        <div class="w-24 h-24 bg-slate-200 rounded-full flex items-center justify-center text-slate-400 text-4xl">
+
+                            <i class="fa-solid fa-user-tie"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h2 class="text-2xl font-bold text-slate-900" id="userName">Loading...</h2>
+
+                            <p class="text-slate-500" id="userInst">Loading...</p>
+
+                            <div class="mt-4 flex gap-4 text-sm">
+
+                                <div class="bg-slate-50 px-4 py-2 rounded border border-slate-200">
+
+                                    <span class="block text-[10px] text-slate-400 uppercase font-bold">Role</span>
+
+                                    <span class="font-bold" id="userRole">--</span>
+
+                                </div>
+
+                                <div class="bg-slate-50 px-4 py-2 rounded border border-slate-200">
+
+                                    <span class="block text-[10px] text-slate-400 uppercase font-bold">Account ID</span>
+
+                                    <span class="font-bold font-mono" id="userId">--</span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+
+    <script>
+
+        const API_BASE = "";
+
+        let equityChartInstance = null;
+
+        let killSwitchState = false;
+
+
+
+        // Global variables for capital validation
+
+        let GLOBAL_HOLDINGS_VALUE = 0;
+
+        let GLOBAL_TOTAL_EQUITY = 0;
+
+
+
+        function navigateTo(element, viewId) {
+
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            if (element) element.classList.add('active');
+
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+
+            const targetView = document.getElementById('view-' + viewId);
+
+            if (targetView) targetView.classList.remove('hidden');
+
+
+
+            const titles = {
+
+                'dashboard': 'Dashboard',
+
+                'signals': 'Signal Queue',
+
+                'analytics': 'Performance Analytics',
+
+                'history': 'Trade History',
+
+                'profile': 'User Profile',
+
+                'settings': 'Configuration'
+
+            };
+
+            document.getElementById('pageTitle').innerText = titles[viewId];
+
+
+
+            if (viewId === 'analytics') renderEquityChart();
+
+            if (viewId === 'history') fetchHistory();
+
+            if (viewId === 'settings') fetchConfig();
+
+            if (viewId === 'profile') fetchProfile();
+
+            if (viewId === 'signals') fetchSignals();
+
+        }
+
+
+
+        function connectKite() {
+
+            window.location.href = API_BASE + "/login";
+
+        }
+
+
+
+        async function toggleKillSwitch() {
+
+            const newState = !killSwitchState;
+
+            try {
+
+                const res = await fetch(API_BASE + `/kill?active=${newState}`, { method: 'POST' });
+
+                const data = await res.json();
+
+                killSwitchState = data.kill_active;
+
+                updateKillSwitchUI();
+
+            } catch (e) { console.error(e); }
+
+        }
+
+
+
+        function updateKillSwitchUI() {
+
+            const btn = document.getElementById('killSwitchBtn');
+
+            if (killSwitchState) {
+
+                btn.classList.remove('bg-red-50', 'text-red-600', 'border-red-200');
+
+                btn.classList.add('bg-red-600', 'text-white', 'border-red-600', 'animate-pulse');
+
+                btn.innerHTML = '<i class="fa-solid fa-lock"></i> SYSTEM LOCKED';
+
+            } else {
+
+                btn.classList.add('bg-red-50', 'text-red-600', 'border-red-200');
+
+                btn.classList.remove('bg-red-600', 'text-white', 'border-red-600', 'animate-pulse');
+
+                btn.innerHTML = '<i class="fa-solid fa-skull"></i> KILL SWITCH';
+
+            }
+
+        }
+
+
+
+        async function fetchSystemData() {
+
+            try {
+
+                const statusRes = await fetch(API_BASE + "/status");
+
+                const status = await statusRes.json();
+
+
+
+                const dot = document.getElementById('connDot');
+
+                const text = document.getElementById('connText');
+
+                if (status.connected) {
+
+                    dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]";
+
+                    text.innerText = "ONLINE";
+
+                    text.className = "text-[10px] font-bold text-emerald-600";
+
+                }
+
+
+
+                document.getElementById('regimeText').innerText = status.regime.toUpperCase();
+
+
+
+                if (status.kill_switch !== killSwitchState) {
+
+                    killSwitchState = status.kill_switch;
+
+                    updateKillSwitchUI();
+
+                }
+
+
+
+                const sensex = await (await fetch(API_BASE + "/sensex")).json();
+
+                document.getElementById('sensexValue').innerText = sensex.price.toFixed(2);
+
+                document.getElementById('sensexChange').innerText = sensex.change_pct.toFixed(2) + "%";
+
+                document.getElementById('sensexChange').className = `font-mono text-xs font-bold ${sensex.change_pct >= 0 ? 'text-emerald-500' : 'text-red-500'}`;
+
+
+
+                const nifty = await (await fetch(API_BASE + "/nifty")).json();
+
+                document.getElementById('niftyValue').innerText = nifty.price.toFixed(2);
+
+                document.getElementById('niftyChange').innerText = nifty.change_pct.toFixed(2) + "%";
+
+                document.getElementById('niftyChange').className = `font-mono text-xs font-bold ${nifty.change_pct >= 0 ? 'text-emerald-500' : 'text-red-500'}`;
+
+
+
+            } catch (e) {}
+
+        }
+
+
+
+        // ==========================================
+
+        // MODIFIED: FIX FOR DASHBOARD LOADING 
+
+        // ==========================================
+
+        async function fetchDashboard() {
+
+            try {
+
+                // Fetch config and history first to avoid undefined vars
+
+                const confRes = await fetch(API_BASE + "/config");
+
+                const config = await confRes.json();
+
+                
+
+                const posRes = await fetch(API_BASE + "/positions");
+
+                const positions = await posRes.json();
+
+
+
+                const historyRes = await fetch(API_BASE + "/history");
+
+                const history = await historyRes.json();
+
+
+
+                let totalUnrealizedPnL = 0;
+
+                let totalDeployed = 0;
+
+
+
+                const tbody = document.getElementById('positionsTable');
+
+                tbody.innerHTML = '';
+
+
+
+                if (positions.length === 0) {
+
+                    tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-8 text-center text-slate-400">No active positions.</td></tr>';
+
+                }
+
+
+
+                positions.forEach(pos => {
+
+                    const invested = pos.avg * pos.qty;
+
+                    const current = pos.ltp * pos.qty;
+
+                    const pnl = current - invested;
+
+
+
+                    totalDeployed += invested;
+
+                    totalUnrealizedPnL += pnl;
+
+
+
+                    const pnlClass = pnl >= 0 ? 'text-emerald-600' : 'text-red-500';
+
+                    const decay = Math.min((pos.days / pos.maxDays) * 100, 100);
+
+
+
+                    tbody.innerHTML += `
+
+                        <tr class="border-b border-slate-50 hover:bg-slate-50">
+
+                            <td class="px-6 py-4 font-bold text-slate-800">${pos.symbol}</td>
+
+                            <td class="px-6 py-4 text-right font-mono">${pos.qty}</td>
+
+                            <td class="px-6 py-4 text-right font-mono text-slate-500">${pos.avg.toFixed(2)}</td>
+
+                            <td class="px-6 py-4 text-right font-mono font-bold">${pos.ltp.toFixed(2)}</td>
+
+                            <td class="px-6 py-4 text-right font-mono font-bold ${pnlClass}">${pnl >= 0 ? '+' : ''}${pnl.toFixed(0)}</td>
+
+                            <td class="px-6 py-4">
+
+                                <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+
+                                    <div class="bg-primary h-full" style="width: ${decay}%"></div>
+
+                                </div>
+
+                                <div class="text-[10px] text-center text-slate-400 mt-1">${pos.days}/${pos.maxDays}d</div>
+
+                            </td>
+
+                            <td class="px-6 py-4 text-right">
+
+                                <button onclick="exitPosition('${pos.symbol}')" class="text-xs text-red-500 border border-red-200 px-2 py-1 rounded hover:bg-red-50">Exit</button>
+
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                });
+
+
+
+                // Calculate PnL
+
+                let realizedPnL = history.reduce((sum, trade) => sum + parseFloat(trade.PnL), 0);
+
+                let dayPnL = realizedPnL + totalUnrealizedPnL;
+
+
+
+                // Update Dashboard Headers using API constraints
+
+                document.getElementById('totalEquity').innerText = "₹" + config.total_account_equity.toLocaleString('en-IN', {maximumFractionDigits: 0});
+
+                document.getElementById('cashAvailable').innerText = "₹" + config.strategy_cash_available.toLocaleString('en-IN', {maximumFractionDigits: 0});
+
+                
+
+                let modeText = config.mode === "TOTAL_EQUITY" ? "Using Total Broker Cash" : "Clamped by Fixed Capital";
+
+                document.getElementById('cashSubtitle').innerText = modeText;
+
+
+
+                const exposure = (totalDeployed / config.strategy_effective_capital) * 100;
+
+                document.getElementById('riskExposure').innerText = exposure.toFixed(1) + "%";
+
+
+
+                document.getElementById('dayPnL').innerText = "₹" + dayPnL.toLocaleString('en-IN', {maximumFractionDigits: 0});
+
+                document.getElementById('dayPnL').className = `text-2xl font-bold font-mono tracking-tight ${dayPnL >= 0 ? 'text-emerald-500' : 'text-red-500'}`;
+
+
+
+            } catch (e) {
+
+                console.error("Dashboard Fetch Failed:", e);
+
+            }
+
+        }
+
+
+
+        async function fetchLogs() {
+
+            const res = await fetch(API_BASE + "/logs");
+
+            const logs = await res.json();
+
+            const container = document.getElementById('consoleLog');
+
+            container.innerHTML = '';
+
+            logs.slice().reverse().forEach(log => {
+
+                let color = 'text-slate-400';
+
+                if (log.type === 'trade') color = 'text-blue-400';
+
+                if (log.type === 'error') color = 'text-red-400';
+
+                if (log.type === 'success') color = 'text-emerald-400';
+
+                container.innerHTML += `<div class="mb-1"><span class="opacity-50 mr-2">[${log.time}]</span><span class="${color}">${log.msg}</span></div>`;
+
+            });
+
+        }
+
+
+
+        async function renderEquityChart() {
+
+            const res = await fetch(API_BASE + "/performance");
+
+            const data = await res.json();
+
+
+
+            const labels = data.map(d => d.date);
+
+            const values = data.map(d => d.equity);
+
+
+
+            const ctx = document.getElementById('equityChart').getContext('2d');
+
+            if (equityChartInstance) equityChartInstance.destroy();
+
+
+
+            equityChartInstance = new Chart(ctx, {
+
+                type: 'line',
+
+                data: {
+
+                    labels: labels,
+
+                    datasets: [{
+
+                        label: 'Portfolio Value',
+
+                        data: values,
+
+                        borderColor: '#2563EB',
+
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+
+                        borderWidth: 2,
+
+                        fill: true,
+
+                        tension: 0.3,
+
+                        pointRadius: 2
+
+                    }]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: { legend: { display: false } },
+
+                    scales: {
+
+                        x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+
+                        y: { grid: { color: '#F1F5F9' } }
+
+                    }
+
+                }
+
+            });
+
+        }
+
+
+
+        async function fetchHistory() {
+
+            const res = await fetch(API_BASE + "/history");
+
+            const data = await res.json();
+
+            const tbody = document.getElementById('historyTable');
+
+            tbody.innerHTML = '';
+
+
+
+            if (data.length === 0) {
+
+                tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-400">No trade history found.</td></tr>';
+
+                return;
+
+            }
+
+
+
+            data.forEach(trade => {
+
+                const pnl = parseFloat(trade.PnL);
+
+                tbody.innerHTML += `
+
+                    <tr class="hover:bg-slate-50">
+
+                        <td class="p-4 font-bold text-slate-700">${trade.Symbol}</td>
+
+                        <td class="p-4 text-slate-500">${trade['Entry Date']}</td>
+
+                        <td class="p-4 text-slate-500">${trade['Exit Date']}</td>
+
+                        <td class="p-4 text-right font-mono">${parseFloat(trade['Entry Price']).toFixed(2)}</td>
+
+                        <td class="p-4 text-right font-mono">${parseFloat(trade['Exit Price']).toFixed(2)}</td>
+
+                        <td class="p-4 text-right font-mono">${trade.Qty}</td>
+
+                        <td class="p-4"><span class="bg-slate-100 px-2 py-1 rounded text-xs font-bold text-slate-500">${trade.Reason}</span></td>
+
+                        <td class="p-4 text-right font-bold font-mono ${pnl >= 0 ? 'text-emerald-600' : 'text-red-500'}">${pnl.toFixed(2)}</td>
+
+                    </tr>
+
+                `;
+
+            });
+
+        }
+
+
+
+        async function fetchSignals() {
+
+            const res = await fetch(API_BASE + "/signals");
+
+            const data = await res.json();
+
+            const tbody = document.getElementById('signalTable');
+
+            tbody.innerHTML = '';
+
+
+
+            if (data.length === 0) {
+
+                tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">No signals generated yet.</td></tr>';
+
+                return;
+
+            }
+
+
+
+            data.forEach(sig => {
+
+                tbody.innerHTML += `
+
+                    <tr class="hover:bg-slate-50">
+
+                        <td class="p-4 font-bold text-slate-700">${sig.symbol}</td>
+
+                        <td class="p-4 font-mono font-bold text-blue-600">${sig.score.toFixed(2)}</td>
+
+                        <td class="p-4 font-mono">${sig.price.toFixed(2)}</td>
+
+                        <td class="p-4"><span class="bg-blue-50 text-blue-600 px-2 py-1 rounded text-xs font-bold">${sig.signal_mult}x</span></td>
+
+                        <td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${sig.is_high_vol ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600'}">${sig.is_high_vol ? 'HIGH' : 'NORMAL'}</span></td>
+
+                    </tr>
+
+                 `;
+
+            });
+
+        }
+
+
+
+        // ==========================================
+
+        // NEW: STRATEGY CONFIG & CAPITAL LOGIC
+
+        // ==========================================
+
+        async function fetchConfig() {
+
+            const res = await fetch(API_BASE + "/config");
+
+            const data = await res.json();
+
+            
+
+            // Populate general config
+
+            const div = document.getElementById('configContainer');
+
+            div.innerHTML = `
+
+                <div class="p-4 bg-slate-50 rounded border border-slate-200">
+
+                    <span class="block text-xs uppercase font-bold text-slate-400 mb-1">Risk Per Trade</span>
+
+                    <span class="text-lg font-mono font-bold text-slate-800">${data.risk_per_trade * 100}%</span>
+
+                </div>
+
+                <div class="p-4 bg-slate-50 rounded border border-slate-200">
+
+                    <span class="block text-xs uppercase font-bold text-slate-400 mb-1">Max Positions</span>
+
+                    <span class="text-lg font-mono font-bold text-slate-800">${data.max_positions}</span>
+
+                </div>
+
+                <div class="p-4 bg-slate-50 rounded border border-slate-200">
+
+                    <span class="block text-xs uppercase font-bold text-slate-400 mb-1">Pyramid Limit</span>
+
+                    <span class="text-lg font-mono font-bold text-slate-800">${data.pyramid_limit}</span>
+
+                </div>
+
+            `;
+
+
+
+            // Populate Capital UI
+
+            document.getElementById('capitalMode').value = data.mode;
+
+            document.getElementById('fixedCapitalInput').value = data.configured_capital;
+
+            handleModeChange();
+
+
+
+            // Set constraints
+
+            GLOBAL_HOLDINGS_VALUE = data.current_holdings_value;
+
+            GLOBAL_TOTAL_EQUITY = data.total_account_equity;
+
+
+
+            document.getElementById('constHoldings').innerText = "₹" + GLOBAL_HOLDINGS_VALUE.toLocaleString('en-IN', {maximumFractionDigits:0});
+
+            document.getElementById('constTotalEq').innerText = "₹" + GLOBAL_TOTAL_EQUITY.toLocaleString('en-IN', {maximumFractionDigits:0});
+
+        }
+
+
+
+        function handleModeChange() {
+
+            const mode = document.getElementById('capitalMode').value;
+
+            const fixedGroup = document.getElementById('fixedCapitalInputGroup');
+
+            if (mode === "FIXED") {
+
+                fixedGroup.classList.remove("hidden");
+
+            } else {
+
+                fixedGroup.classList.add("hidden");
+
+            }
+
+            document.getElementById('capitalErrorMsg').classList.add("hidden");
+
+        }
+
+
+
+        async function saveCapitalSettings() {
+
+            const mode = document.getElementById('capitalMode').value;
+
+            let fixedCap = parseFloat(document.getElementById('fixedCapitalInput').value);
+
+            const errDiv = document.getElementById('capitalErrorMsg');
+
+
+
+            errDiv.classList.add("hidden");
+
+
+
+            if (mode === "FIXED") {
+
+                if (isNaN(fixedCap)) {
+
+                    errDiv.innerText = "Please enter a valid amount.";
+
+                    errDiv.classList.remove("hidden");
+
+                    return;
+
+                }
+
+                if (fixedCap < GLOBAL_HOLDINGS_VALUE) {
+
+                    errDiv.innerText = "Error: Capital cannot be less than current holdings value (₹" + GLOBAL_HOLDINGS_VALUE.toFixed(0) + ").";
+
+                    errDiv.classList.remove("hidden");
+
+                    return;
+
+                }
+
+                if (fixedCap > GLOBAL_TOTAL_EQUITY) {
+
+                    errDiv.innerText = "Error: Capital cannot be greater than Total Account Equity (₹" + GLOBAL_TOTAL_EQUITY.toFixed(0) + ").";
+
+                    errDiv.classList.remove("hidden");
+
+                    return;
+
+                }
+
+            } else {
+
+                fixedCap = 0; // Backend ignores this when TOTAL_EQUITY mode is on
+
+            }
+
+
+
+            try {
+
+                await fetch(API_BASE + "/update_capital", {
+
+                    method: 'POST',
+
+                    headers: { 'Content-Type': 'application/json' },
+
+                    body: JSON.stringify({ mode: mode, amount: fixedCap })
+
+                });
+
+                alert("Capital settings saved successfully!");
+
+                fetchDashboard(); // Refresh metrics
+
+            } catch (e) {
+
+                alert("Failed to save configuration.");
+
+            }
+
+        }
+
+
+
+        async function fetchProfile() {
+
+            const res = await fetch(API_BASE + "/user");
+
+            const data = await res.json();
+
+            document.getElementById('userName').innerText = data.name;
+
+            document.getElementById('userInst').innerText = data.institution;
+
+            document.getElementById('userRole').innerText = data.role;
+
+            document.getElementById('userId').innerText = data.account_id;
+
+        }
+
+
+
+        async function exitPosition(symbol) {
+
+            if (confirm(`Sell ${symbol} immediately?`)) {
+
+                await fetch(API_BASE + `/exit/${symbol}`, { method: 'POST' });
+
+                setTimeout(fetchDashboard, 1000);
+
+            }
+
+        }
+
+
+
+        window.onload = () => {
+
+            fetchSystemData();
+
+            fetchDashboard();
+
+            setInterval(fetchSystemData, 2000);
+
+            setInterval(fetchDashboard, 3000);
+
+            setInterval(fetchLogs, 1500);
+
+
+
+            setInterval(() => {
+
+                document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-US', { hour12: false });
+
+            }, 1000);
+
+        };
+
+    </script>
+
+</body>
+
+</html>
+

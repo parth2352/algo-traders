@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+
+.vercel/
+
+AccessToken/
+EQUITY_CURVE.json
+Live_TradeBook.json
+TradeHistory.csv
+EquityHistory.csv

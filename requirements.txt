@@ -1,0 +1,9 @@
+fastapi==0.111.0
+uvicorn==0.30.1
+pandas
+numpy
+kiteconnect
+openpyxl
+python-multipart
+# Add pydantic specifically in case of version mismatches
+pydantic
